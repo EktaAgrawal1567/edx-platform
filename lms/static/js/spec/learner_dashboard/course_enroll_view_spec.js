@@ -57,6 +57,7 @@ define([
                 is_course_ended: false,
                 is_enrolled: false,
                 is_enrollment_open: true,
+                status: 'published',
                 upgrade_url: ''
             }];
 
@@ -80,7 +81,10 @@ define([
                 enrollment_open_date: 'Jan 18, 2016',
                 is_course_ended: false,
                 is_enrolled: false,
-                is_enrollment_open: true
+                is_enrollment_open: true,
+                // TODO: Add test cases verifying that this run is filtered out
+                // when this field is null or unpublished.
+                status: 'published'
             }, {
                 key: 'course-v1:WageningenX+FFESx+1T2017',
                 uuid: '2f2edf03-79e6-4e39-aef0-65436a6ee344',
@@ -99,7 +103,8 @@ define([
                 enrollment_open_date: 'Jan 18, 2016',
                 is_course_ended: false,
                 is_enrolled: false,
-                is_enrollment_open: true
+                is_enrollment_open: true,
+                status: 'published'
             }];
         });
 
