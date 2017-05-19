@@ -34,9 +34,9 @@ class TestRecalculateSubsectionGrades(HasCourseWithProblemsMixin, ModuleStoreTes
     def test_submissions(self, task_mock, id_mock, subs_mock):
         submission = MagicMock()
         submission.student_item = MagicMock(
-                student_id="anonymousID",
-                course_id='x/y/z',
-                item_id='abc',
+            student_id="anonymousID",
+            course_id='x/y/z',
+            item_id='abc',
         )
         submission.created_at = utc.localize(datetime.strptime('2016-08-23 16:43', DATE_FORMAT))
         subs_mock.objects.filter.return_value = [submission]
