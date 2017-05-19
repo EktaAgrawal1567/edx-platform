@@ -91,8 +91,9 @@ from openedx.core.djangoapps.programs.utils import ProgramMarketingDataExtender
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangoapps.self_paced.models import SelfPacedConfiguration
 from openedx.core.djangoapps.monitoring_utils import set_custom_metrics_for_course_key
+from openedx.features.course_experience import course_home_url_name
 from openedx.features.course_experience import (
-    course_home_url_name,
+    course_experience_config,
     UNIFIED_COURSE_EXPERIENCE_FLAG,
     UNIFIED_COURSE_VIEW_FLAG,
 )
@@ -272,8 +273,8 @@ def course_info(request, course_id):
         return None
 
     # If the unified course experience is enabled, redirect to the "Course" tab
-    if waffle.flag_is_active(request, UNIFIED_COURSE_EXPERIENCE_FLAG):
-        return redirect(reverse(course_home_url_name(request), args=[course_id]))
+    if course_experience_config().is_enabled(UNIFIED_COURSE_EXPERIENCE_FLAG, course_id):
+        return redirect(reverse(course_home_url_name(course_id), args=[course_id]))
 
     course_key = CourseKey.from_string(course_id)
     with modulestore().bulk_operations(course_key):
@@ -673,7 +674,7 @@ def course_about(request, course_id):
         modes = CourseMode.modes_for_course_dict(course_key)
 
         if configuration_helpers.get_value('ENABLE_MKTG_SITE', settings.FEATURES.get('ENABLE_MKTG_SITE', False)):
-            return redirect(reverse(course_home_url_name(request), args=[unicode(course.id)]))
+            return redirect(reverse(course_home_url_name(course.id), args=[unicode(course.id)]))
 
         registered = registered_for_course(course, request.user)
 
@@ -681,7 +682,7 @@ def course_about(request, course_id):
         studio_url = get_studio_url(course, 'settings/details')
 
         if has_access(request.user, 'load', course):
-            course_target = reverse(course_home_url_name(request), args=[course.id.to_deprecated_string()])
+            course_target = reverse(course_home_url_name(course.id), args=[course.id.to_deprecated_string()])
         else:
             course_target = reverse('about_course', args=[course.id.to_deprecated_string()])
 
@@ -1245,7 +1246,7 @@ def course_survey(request, course_id):
     course_key = CourseKey.from_string(course_id)
     course = get_course_with_access(request.user, 'load', course_key)
 
-    redirect_url = reverse(course_home_url_name(request), args=[course_id])
+    redirect_url = reverse(course_home_url_name(course.id), args=[course_id])
 
     # if there is no Survey associated with this course,
     # then redirect to the course instead
